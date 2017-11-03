@@ -3,7 +3,9 @@ import torch.nn as nn
 import torchvision
 
 
-def get_pretrained_model(model='resnet18', pop_last_pool_layer=False, use_cuda=False):
+def get_pretrained_model(model='resnet18',
+                         pop_last_pool_layer=False,
+                         use_cuda=False):
     """Get pretrained model and return model's features, dense layer, and dense layer dimensions
 
     :param  model: A string of the model's name
@@ -28,14 +30,21 @@ def get_pretrained_model(model='resnet18', pop_last_pool_layer=False, use_cuda=F
         pretrained_features.cuda()
 
     if pop_last_pool_layer:
-        pretrained_features = nn.Sequential(*list(pretrained_features.children())[:-1])
+        pretrained_features = nn.Sequential(*list(
+            pretrained_features.children())[:-1])
 
     for param in pretrained_features.parameters():
         param.requires_grad = False
-    
+
     return pretrained_features, pretrained_fc, fc_dim
 
-def load_model(ModelClass, input_shape, output_shape, weights_path=None, return_conv_layer=False, use_cuda=False):
+
+def load_fcn_model(ModelClass,
+                   input_shape,
+                   output_shape,
+                   weights_path=None,
+                   return_conv_layer=False,
+                   use_cuda=False):
     model = ModelClass(input_shape, output_shape, return_conv_layer)
 
     if use_cuda:
@@ -46,7 +55,13 @@ def load_model(ModelClass, input_shape, output_shape, weights_path=None, return_
 
     return model
 
-def load_fc_model(ModelClass, pretrained_fc, fc_dim, output_shape, weights_path=None, use_cuda=False):
+
+def load_fc_model(ModelClass,
+                  pretrained_fc,
+                  fc_dim,
+                  output_shape,
+                  weights_path=None,
+                  use_cuda=False):
     model = ModelClass(pretrained_fc, fc_dim, output_shape)
 
     if use_cuda:
@@ -57,7 +72,9 @@ def load_fc_model(ModelClass, pretrained_fc, fc_dim, output_shape, weights_path=
 
     return model
 
+
 def save_model(model, weights_path):
     torch.save(model.state_dict(), weights_path)
+
 
 # TODO: def visualize_model(model, data_set_loader, num_images=5):
