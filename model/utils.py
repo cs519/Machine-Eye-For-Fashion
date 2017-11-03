@@ -5,7 +5,7 @@ import torchvision
 
 def get_pretrained_model(model='resnet18',
                          pop_last_pool_layer=False,
-                         use_cuda=False):
+                         use_gpu=False):
     """Get pretrained model and return model's features, dense layer, and dense layer dimensions
 
     :param  model: A string of the model's name
@@ -26,7 +26,7 @@ def get_pretrained_model(model='resnet18',
         pretrained_fc = vgg.classifier
         fc_dim = 4096
 
-    if use_cuda:
+    if use_gpu:
         pretrained_features.cuda()
 
     if pop_last_pool_layer:
@@ -44,10 +44,10 @@ def load_fcn_model(ModelClass,
                    output_shape,
                    weights_path=None,
                    return_conv_layer=False,
-                   use_cuda=False):
+                   use_gpu=False):
     model = ModelClass(input_shape, output_shape, return_conv_layer)
 
-    if use_cuda:
+    if use_gpu:
         model.cuda()
 
     if weights_path:
@@ -58,13 +58,13 @@ def load_fcn_model(ModelClass,
 
 def load_fc_model(ModelClass,
                   pretrained_fc,
-                  fc_dim,
+                  fc_shape,
                   output_shape,
                   weights_path=None,
-                  use_cuda=False):
-    model = ModelClass(pretrained_fc, fc_dim, output_shape)
+                  use_gpu=False):
+    model = ModelClass(pretrained_fc, fc_shape, output_shape)
 
-    if use_cuda:
+    if use_gpu:
         model.cuda()
 
     if weights_path:
