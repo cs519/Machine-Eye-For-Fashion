@@ -139,7 +139,7 @@ def create_attributes_fcn_model(ModelClass,
             col_shape,
             weights_path=load_weights_path,
             return_conv_layer=False,
-            use_cuda=use_gpu)
+            use_gpu=use_gpu)
 
         # Decide it model will be used for training or testing
         if mode == 'train':
@@ -155,7 +155,8 @@ def create_attributes_fcn_model(ModelClass,
                 batch_size,
                 num_workers,
                 num_epochs,
-                use_gpu=use_gpu)
+                use_gpu=use_gpu,
+                latten_pretrained_out=False)
             # Save weights after completing training
             utils.save_model(model, weights_path)
 
@@ -164,4 +165,63 @@ def create_attributes_fcn_model(ModelClass,
     return models
 
 
-#TODO: create_attributes_fc_model
+def create_attributes_fc_model(ModelClass,
+                               pretrained_fc,
+                               pretrained_features,
+                               fc_shape,
+                               target_columns,
+                               weights_root,
+                               labels_file,
+                               train_images_folder,
+                               valid_images_folder=None,
+                               mode='train',
+                               batch_size=32,
+                               num_workers=4,
+                               num_epochs=10,
+                               use_gpu=None):
+
+    # Each target needs its own model
+    models = {}
+
+    # Create a model for each target attribute/label
+    for col_name, col_shape in target_columns.items():
+        print("Processing Attribute: {}".format(col_name))
+
+        # Set path for weights file (weights may or may not exist)
+        weights_path = os.path.join(weights_root, col_name + ".pth")
+        load_weights_path = None
+
+        # Only load weights if it exists already
+        if os.path.exists(weights_path):
+            load_weights_path = weights_path
+
+        # Get new Dense model
+        model = utils.load_fc_model(
+            ModelClass,
+            pretrained_fc,
+            fc_shape,
+            col_shape,
+            weights_path=load_weights_path,
+            use_gpu=use_gpu)
+
+        if mode == 'train':
+            print("Start training for: {}".format(col_name))
+            # Train the model
+            mode = train_model(
+                model,
+                pretrained_features,
+                col_name,
+                labels_file,
+                train_images_folder,
+                valid_images_folder,
+                batch_size,
+                num_workers,
+                num_epochs,
+                use_gpu=use_gpu,
+                flatten_pretrained_out=True)
+            # Save weights after completing training
+            utils.save_model(model, weights_path)
+
+        models[col_name] = model
+
+    return models
