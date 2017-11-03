@@ -3,7 +3,7 @@ import torch.nn as nn
 import torchvision
 
 
-def get_pretrained_model(model='resnet18', pop_last_pool_layer=False):
+def get_pretrained_model(model='resnet18', pop_last_pool_layer=False, use_cuda=False):
     """Get pretrained model and return model's features, dense layer, and dense layer dimensions
 
     :param  model: A string of the model's name
@@ -24,7 +24,8 @@ def get_pretrained_model(model='resnet18', pop_last_pool_layer=False):
         pretrained_fc = vgg.classifier
         fc_dim = 4096
 
-    pretrained_features.cuda()
+    if use_cuda:
+        pretrained_features.cuda()
 
     if pop_last_pool_layer:
         pretrained_features = nn.Sequential(*list(pretrained_features.children())[:-1])
@@ -34,18 +35,22 @@ def get_pretrained_model(model='resnet18', pop_last_pool_layer=False):
     
     return pretrained_features, pretrained_fc, fc_dim
 
-def load_model(ModelClass, input_shape, output_shape, weights_path=None, return_conv_layer=False):
+def load_model(ModelClass, input_shape, output_shape, weights_path=None, return_conv_layer=False, use_cuda=False):
     model = ModelClass(input_shape, output_shape, return_conv_layer)
-    model.cuda()
+
+    if use_cuda:
+        model.cuda()
 
     if weights_path:
         model.load_state_dict(torch.load(weights_path))
 
     return model
 
-def load_fc_model(ModelClass, pretrained_fc, fc_dim, output_shape, weights_path=None):
+def load_fc_model(ModelClass, pretrained_fc, fc_dim, output_shape, weights_path=None, use_cuda=False):
     model = ModelClass(pretrained_fc, fc_dim, output_shape)
-    model.cuda()
+
+    if use_cuda:
+        model.cuda()
 
     if weights_path:
         model.load_state_dict(torch.load(weights_path))
