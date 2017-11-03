@@ -19,7 +19,8 @@ class AttributeFCN(nn.Module):
         self.return_conv_layer = return_conv_layer
 
         self.model = nn.Sequential([
-            nn.Conv2d(input_shape, 256, 3, stride=1, padding=1),
+            nn.BatchNorm2d(input_shape),
+            nn.Conv2d(input_shape, 256, 3,stride=1, padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(256),
             nn.Conv2d(256, 128, 3, stride=1, padding=1),
@@ -45,23 +46,41 @@ class AttributeFCN(nn.Module):
             return classes
 
 def optim_scheduler(model, epoch, lr=0.01, decay=7):
+    # decrease learning rate every 7 epochs
     updated_lr = lr * (0.1 ** (epoch // decay))
 
     # Show current learning rate
     if epoch % decay == 0:
         print('LR is now {}'.format(updated_lr))
 
+    # Use Stochastic Gradient Decent with a momentum of 0.9
     optimizer = optim.SGD(model.parameters(), lr=updated_lr, momentum=0.9)
 
     return optimizer
 
-#TODO: accuracy
+def precision(output, target, topk=(1,)):
+    """Computes the precision for the top k results"""
+
+    maxk = max(topk)
+    batch_size = target.size(0)
+
+    _, pred = output.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+    return res
+
+
 
 #TODO: train_attribute_model
 
 #TODO: train_model
 
-#TODO: predict_model
+
 def predict_model(model, inputs, flatten=False):
     outputs = model(inputs)
     if flatten:
@@ -75,5 +94,10 @@ def predict_model(model, inputs, flatten=False):
 #TODO: predict_attributes
 
 #TODO: create_attributes_model
+
+
+    
+
+
 
 #TODO: create_attributes_fc_model
