@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torchvision
+from torch.autograd import Variable
+from matplotlib import pyplot as plt, imshow
 
 
 def get_pretrained_model(model='resnet18',
@@ -77,4 +79,24 @@ def save_model(model, weights_path):
     torch.save(model.state_dict(), weights_path)
 
 
-# TODO: def visualize_model(model, data_set_loader, num_images=5):
+def visualize_model(model, data_set_loader, num_images=5, use_gpu=None):
+    if not use_gpu:
+        use_gpu = torch.cuda.is_avalable()
+
+    for i, data in enumerate(data_set_loader):
+        batch_files, inputs, labels = data
+
+        if use_gpu:
+            inputs = Variable(inputs.cuda())
+            labels = Variable(labels.cuda())
+        else:
+            inputs = Variable(inputs)
+            labels = Variable(labels)
+
+    outputs = model(inputs)
+    _, preds = torch.max(outputs.data, 1)
+
+    plt.figure()
+
+    imshow(inputs.cpu().data[0])
+    plt.title('pred: {}'.format(dset_classes[labels.data[0]]))
