@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torchvision
 from torch.autograd import Variable
-from matplotlib import pyplot as plt, imshow
+from matplotlib import pyplot as plt 
+from matplotlib.pyplot import imshow
 
 
 def get_pretrained_model(model='resnet18',
