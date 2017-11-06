@@ -2,7 +2,6 @@ import time
 import copy
 import os
 
-import utils
 import numpy as np
 
 import torch
@@ -13,12 +12,16 @@ from torch import optim
 from torch.autograd import Variable
 
 
+from preprocessing.preprocessing import make_dsets, get_label_idx_to_name, image_loader, default_loader, get_transforms
+from model import utils
+
 class AttributeFC(nn.Module):
 
     def __init__(self, pretrained_fc, fc_dim, output_shape):
         super().__init__()
         layers = list(
             pretrained_fc.children())[:-1] + [nn.Linear(fc_dim, output_shape)]
+        self.model = nn.Sequential(*layers)
 
     def forward(self, x):
         return F.softmax(self.model(x))
@@ -30,7 +33,7 @@ class AttributeFCN(nn.Module):
         super().__init__()
         self.return_conv_layer = return_conv_layer
 
-        self.model = nn.Sequential([
+        self.model = nn.Sequential(
             nn.BatchNorm2d(input_shape),
             nn.Conv2d(input_shape, 256, 3, stride=1, padding=1),
             nn.ReLU(),
@@ -41,8 +44,8 @@ class AttributeFCN(nn.Module):
             nn.Conv2d(128, 64, 3, stride=1, padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(64),
-            nn.Conv2d(64, output_shape, 1, stride=1, padding=0)
-        ])
+            nn.Conv2d(64, output_shape, 1)
+        )
 
     def forward(self, x):
         classes_conv_out = self.model(x)
@@ -67,7 +70,7 @@ class AttributePredictDataset(data.Dataset):
                  loader=default_loader):
         super().__init__()
 
-        self.image_url = image.url
+        self.image_url = image_url
         self.transform = transform
         self.target_transform = target_transform
         self.loader = loader
@@ -77,7 +80,7 @@ class AttributePredictDataset(data.Dataset):
         target = 0
 
         if self.transform:
-            image = self.transform(img)
+            image = self.transform(image)
         if self.target_transform:
             target = self.target_transform(target)
 
@@ -192,7 +195,7 @@ def train_attribute_model(model,
                 running_loss += loss.data[0]
                 running_corrects += torch.sum(preds == labels.data)
 
-            epoch_loss = running_loss / dset_sizes[phases]
+            epoch_loss = running_loss / dset_sizes[phase]
             epoch_acc = running_corrects / dset_sizes[phase]
 
             if verbose:
@@ -206,7 +209,7 @@ def train_attribute_model(model,
             # If so, update bests variables
             if phase == 'valid' and epoch_acc > best_acc:
                 best_acc = epoch_acc
-                best_model = copy, data.deepcopy(model)
+                best_model = copy.deepcopy(model)
 
     time_elapsed = time.time() - since
     print('Training completed in {:0f}m and {:0f}s'.format(
@@ -254,7 +257,7 @@ def train_model(model,
         pretrained_features,
         train_dset_loader=train_dset_loader,
         valid_dset_loader=valid_dset_loader,
-        num_epoch=num_epochs,
+        num_epochs=num_epochs,
         use_gpu=use_gpu,
         flatten_pretrained_out=flatten_pretrained_out)
 
@@ -302,7 +305,7 @@ def test_models(attribute_models,
             if return_last_conv_layer:
                 conv_layer_out = model.conv_layer_out(out_features)
 
-            loss = F.nll_loss(output, labels)
+            loss = F.nll_loss(outputs, labels)
             preds_proba, preds = outputs.data.max(1)
             pred_idx = preds.cpu().numpy().flatten()[0]
             preds_proba = np.exp(preds_proba.cpu().numpy.flatten()[0])
