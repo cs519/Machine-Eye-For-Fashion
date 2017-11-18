@@ -15,8 +15,8 @@ def get_pretrained_model(model='resnet18',
     :param pop_last_pool_layer: A boolean
     :rtype pretrained_features: A torch Sequential container
     :rtype pretrained_fc: A torch Linear container
-    :rtype pretrained_features: An integer of Linear/Dense layer outputs
-    """
+    :rtype pretrained_features: An integer of Linear/Dense layer outputs """
+
     if model == 'resnet18':
         resnet = torchvision.models.resnet18(pretrained=True)
         pretrained_features = nn.Sequential(*list(resnet.children())[:-1])
@@ -28,6 +28,10 @@ def get_pretrained_model(model='resnet18',
         pretrained_features = vgg.features
         pretrained_fc = vgg.classifier
         fc_dim = 4096
+    elif model == 'densenet':
+        densenet = torchvision.models.densenet121(pretrained=True)
+        pretrained_features = nn.Sequential(*list(model.children())[:-1])
+        pretrained_fc = densenet.classifier
 
     if use_gpu:
         pretrained_features.cuda()
