@@ -4,7 +4,8 @@ import torchvision
 
 
 class FashionNet(nn.Module):
-
+    """
+    FashionNet model"""
     def __init__(self):
         super().__init__()
         self.vgg = torchvision.models.vgg16(pretrained=True)
@@ -14,8 +15,6 @@ class FashionNet(nn.Module):
     def forward(self, x):
         pass
 
-    def backward(self, x):
-        pass
 
 
 if __name__ == '__main__':
