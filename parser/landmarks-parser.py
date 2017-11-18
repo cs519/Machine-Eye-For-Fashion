@@ -1,5 +1,8 @@
 from landmarks import Landmarks
+
+
 class LandmarkParser:
+
     def __init__(self, filename):
         with open(filename) as infile:
             data = infile.readlines()
@@ -7,11 +10,11 @@ class LandmarkParser:
         data.pop(0)
         for line in data:
             tlist = line.split()
-            name =  tlist.pop(0)
+            name = tlist.pop(0)
             tlist.pop(0)
             tlist.pop(0)
             lList = []
-            while(tlist):
+            while (tlist):
                 if int(tlist.pop(0)) == 2:
                     tlist.pop(0)
                     tlist.pop(0)
