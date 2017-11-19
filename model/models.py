@@ -11,9 +11,9 @@ import torch.utils.data as data
 from torch import optim
 from torch.autograd import Variable
 
-
 from preprocessing.preprocessing import make_dsets, get_label_idx_to_name, image_loader, default_loader, get_transforms
 from model import utils
+
 
 class AttributeFC(nn.Module):
 
@@ -42,10 +42,7 @@ class AttributeFCN(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(128),
             nn.Conv2d(128, 64, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.BatchNorm2d(64),
-            nn.Conv2d(64, output_shape, 1)
-        )
+            nn.ReLU(), nn.BatchNorm2d(64), nn.Conv2d(64, output_shape, 1))
 
     def forward(self, x):
         classes_conv_out = self.model(x)
