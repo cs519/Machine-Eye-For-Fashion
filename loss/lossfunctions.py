@@ -8,7 +8,7 @@
 '''
 
 
-def get_loss(l, v, l_p, v_p, n_it, len):
+def loss_fashion_landmarks(l, v, l_p, v_p, n_it, len):
         t1 = 2000
         t2 = 400
         
@@ -21,3 +21,7 @@ def get_loss(l, v, l_p, v_p, n_it, len):
             betha = 0
 
         #Calculate Euclidient Loss for Visibility, Landmark Positions and Labels
+
+
+def loss_fashion_net:
+    pass
