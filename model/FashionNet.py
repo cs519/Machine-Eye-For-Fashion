@@ -47,7 +47,7 @@ class FashionNet(nn.Module):
 
 def features(batch_norm=False):
     # Get pretrained vgg model
-    vgg = torchvision.models.vgg16(pretrained=True)
+    vgg = torchvision.models.vgg16(pretrained=True, batch_norm=batch_norm)
     # Select up to conv4 block
     layers = list(vgg.features.children())[:-7]
 
@@ -73,8 +73,15 @@ def make_landmark_pose_layers(batch_norm=False):
 
 def landmark_network(batch_norm=False):
     vgg = features(batch_norm=batch_norm)
+
+    for param in vgg.parameters():
+        param.requires_grad = False
+
     pose = make_landmark_pose_layers(batch_norm=batch_norm)
     model = FashionNet(vgg, pose)
+
+    if torch.cuda.is_available:
+        model = model.cuda()
 
     return model
 
