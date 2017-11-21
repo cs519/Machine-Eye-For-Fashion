@@ -46,6 +46,14 @@ def separate(filename, clothesType, myList):
 
 
 if __name__ == "__main__":
-    infile = "test_landmarks.txt"
+    import os
+    from os import path
+
+    infile = "list_landmarks.txt"
     outfiles = ["1_landmarks.csv", "2_landmarks.csv", "3_landmarks.csv"] 
+    
+    for i in range(1, 4, 1):
+        if not path.exists('output/{}'.format(i)):
+            os.makedirs('output/{}'.format(i), mode=0o777, exist_ok=False)
+    
     parser = Parsing(infile, outfiles)
