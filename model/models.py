@@ -399,12 +399,12 @@ def predict_attributes(image_url,
     if not use_gpu:
         use_gpu = torch.cuda.is_available()
 
-    image_features = image_loader(image_url, use_gpu)
+    image_features = image_loader(image_url, use_gpu=use_gpu)
 
     print(image_features.size())
 
     pretrained_features = predict_model(
-        predict_model, image_features, flatten=flatten_pretrained_out)
+        pretrained_model, image_features, flatten=flatten_pretrained_out)
     results = {}
 
     for attribute_name, model in attribute_models.items():
