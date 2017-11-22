@@ -6,7 +6,7 @@ from model.utils import get_pretrained_model
 from model.models import AttributeFCN, predict_attributes, create_attributes_fcn_model
 from preprocessing.preprocessing import image_loader, load_label_values, get_attribute_dims
 
-image_paths = ['data/testImages/IMG_0973.JPG']
+image_paths = ['demo_data/test/test_nan_01.png']
 use_gpu = torch.cuda.is_available()
 TRAIN_IMAGES_FOLDER = 'data/ClothingAttributeDataset/train/'
 VALID_IMAGES_FOLDER = 'data/ClothingAttributeDataset/valid/'
@@ -38,3 +38,5 @@ for image_path in image_paths:
         flatten_pretrained_out=False)
 
     print(results)
+
+
