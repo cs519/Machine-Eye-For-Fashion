@@ -47,7 +47,10 @@ class FashionNet(nn.Module):
 
 def features(batch_norm=False):
     # Get pretrained vgg model
-    vgg = torchvision.models.vgg16(pretrained=True, batch_norm=batch_norm)
+    if batch_norm:
+        vgg = torchvision.models.vgg16_bn(pretrained=True)
+    else:
+        vgg = torchvision.models.vgg16(pretrained=True)
     # Select up to conv4 block
     layers = list(vgg.features.children())[:-7]
 
