@@ -36,7 +36,20 @@ def separate(filename, clothesType, myList):
             #obtaining path and name of image so we can copy it later
             name = tlist.pop(0)
             #creating cvs line
-            tstr = ' '.join(tlist) + '\n'
+            nline = [tlist.pop(0), tlist.pop(0)]
+            vVals = []
+            while(tlist):
+                visibility = tlist.pop(0)
+                nline.append(tlist.pop(0))
+                nline.append(tlist.pop(0))
+                if visibility == '2':
+                    vVals.append('0')
+                    vVals.append('1')
+                else:
+                    vVals.append('1')
+                    vVals.append('0')
+            nline.extend(vVals)
+            tstr = ' '.join(nline) + '\n'
             outfile.write(tstr)
             #creating path and name for destination of image to be copied
             tstr = "output/" + clothesType + "/" + str(counter) + ".jpg"
