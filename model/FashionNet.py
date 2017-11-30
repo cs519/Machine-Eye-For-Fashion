@@ -12,7 +12,7 @@ class FashionNet(nn.Module):
         self.vgg_features = vgg_features
         self.pose_features = pose_features
         self.fc_pose = nn.Sequential(
-            nn.Linear(512 * 12 * 8, 1),
+            nn.Linear(512 * 7 * 7, 1),
             nn.ReLU(True),
             nn.Linear(1, 1),
             nn.ReLU(True)
