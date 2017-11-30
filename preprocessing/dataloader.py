@@ -3,12 +3,13 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
-from skimage import io
+from PIL import Image
 
 class FashionLandmarkDataset(Dataset):
     """Fashion Landmark dataset."""
 
     def __init__(self, csv_file, root_dir, transform=None):
+        super().__init__()
         """
         Args:
             csv_file (string): Path to the csv file with annotations
@@ -24,13 +25,14 @@ class FashionLandmarkDataset(Dataset):
         return len(self.landmarks_frame)
 
     def __getitem__(self, idx):
-        image_name = os.path.join(self.root_dir, self.landmarks_frame, '.jpg')
-        image = io.imread(image_name)
-        landmarks = self.landmarks_frame.ix[idx, 2:13].as_matrix().astype('uint16')
-        visibility = self.landmarks_frame.ix[idx, 14:].as_matrix().astype('uint8')
-        sample = {'image': image, 'landmarks':landmarks, 'visibiliy': visibility}
+        # print('TYRING TO OPEN FILE: {}'.format(os.path.join(self.root_dir, '{}.jpg'.format(str(self.landmarks_frame.ix[idx, 0])))))
+        image_name = os.path.join(self.root_dir, '{}.jpg'.format(str(self.landmarks_frame.ix[idx, 0])))
+        image = Image.open(image_name).convert('RGB')
+        landmarks = self.landmarks_frame.ix[idx, 3:14].as_matrix().astype('float32')
+        visibility = self.landmarks_frame.ix[idx, 15:].as_matrix().astype('int64')
 
-        if self.transform:
-            sample = self.transform(sample)
+        if self.transform is not None:
+            image = self.transform(image)
+            image = image.unsqueeze(0)
 
-        return sample
+        return image, torch.from_numpy(landmarks), torch.from_numpy(visibility)
