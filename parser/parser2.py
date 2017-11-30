@@ -36,7 +36,26 @@ def separate(filename, clothesType, myList):
             #obtaining path and name of image so we can copy it later
             name = tlist.pop(0)
             #creating cvs line
-            tstr = ' '.join(tlist) + '\n'
+            nline = [tlist.pop(0), tlist.pop(0)]
+            vVals = []
+            while(tlist):
+                visibility = tlist.pop(0)
+                nline.append(tlist.pop(0))
+                nline.append(tlist.pop(0))
+                if visibility == '0':
+                    vVals.append('1')
+                    vVals.append('0')
+                    vVals.append('0')
+                elif visibility == '1':
+                    vVals.append('0')
+                    vVals.append('1')
+                    vVals.append('0')
+                else:
+                    vVals.append('0')
+                    vVals.append('0')
+                    vVals.append('1')
+            nline.extend(vVals)
+            tstr = ' '.join(nline) + '\n'
             outfile.write(tstr)
             #creating path and name for destination of image to be copied
             tstr = "output/" + clothesType + "/" + str(counter) + ".jpg"
@@ -49,7 +68,7 @@ if __name__ == "__main__":
     import os
     from os import path
 
-    infile = "list_landmarks.txt"
+    infile = "test_landmarks.txt"
     outfiles = ["1_landmarks.csv", "2_landmarks.csv", "3_landmarks.csv"] 
     
     for i in range(1, 4, 1):
