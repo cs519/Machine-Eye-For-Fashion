@@ -281,6 +281,8 @@ def test_models(attribute_models,
     image_dset = AttributePredictDataset(
         image_url, transform=get_transforms(is_train=False))
 
+    print(image_dset)
+
     dset_loader = data.DataLoader(image_dset, shuffle=False)
 
     results = {}
@@ -322,7 +324,7 @@ def test_models(attribute_models,
 
     return results
 
-
+#Fuction to evaluate each model
 def evaluate_model(model,
                    pretrained_model,
                    target_column,
@@ -333,9 +335,11 @@ def evaluate_model(model,
                    use_gpu=None,
                    flatten_pretrained_out=False):
 
+    #Set to use GPU
     if not use_gpu:
         use_gpu = torch.cuda.is_available()
 
+    #perform preprocessing
     dset_loader = make_dsets(
         image_folder,
         labels_file,
@@ -347,16 +351,19 @@ def evaluate_model(model,
 
     running_loss = 0
     running_corrects = 0
-    y_true = []
+    y_actual = []
     y_pred = []
     y_pred_prob = []
     input_files = []
 
     model.eval()
 
+    print(dset_loader)
+
     for batch_idx, data in enumerate(dset_loader):
         batch_files, inputs, labels = data
-        y_true = np.concatenate([y_true, labels.numpy()])
+        
+        y_actual = np.concatenate([y_actual, labels.numpy()])
         input_files = np.concatenate([input_files, batch_files])
 
         if use_gpu:
@@ -382,10 +389,10 @@ def evaluate_model(model,
 
     return {
         'loss': running_loss,
-        'accuracy': running_corrects / len(y_true),
-        'y_true': y_true,
+        'accuracy': running_corrects / len(y_actual),
+        'y_actual': y_actual,
         'y_pred': y_pred,
-        'y_pred_prob': y_pred_prob
+        'y_pred_prob': y_pred_prob,
     }
 
 
