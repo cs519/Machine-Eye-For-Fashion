@@ -36,7 +36,7 @@ def separate(filename, clothesType, myList):
             #obtaining path and name of image so we can copy it later
             name = tlist.pop(0)
             #creating cvs line
-            nline = [tlist.pop(0), tlist.pop(0)]
+            nline = [counter, tlist.pop(0), tlist.pop(0)]
             vVals = []
             while(tlist):
                 visibility = tlist.pop(0)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     import os
     from os import path
 
-    infile = "test_landmarks.txt"
+    infile = "list_landmarks.txt"
     outfiles = ["1_landmarks.csv", "2_landmarks.csv", "3_landmarks.csv"] 
     
     for i in range(1, 4, 1):
