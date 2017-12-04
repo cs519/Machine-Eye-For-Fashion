@@ -16,12 +16,13 @@ class Landmarks:
         self.land_list = land_list
 
     def showLand(self):
-        image = cv2.imread(self.image_name)
-        n = len(self.land_list)
+        image = cv2.imread(self.image_name) #read image
+        n = len(self.land_list) #get amount of landmarks
+        #loop through list writing landmarks
         for i in range(n):
-            x = self.land_list[i][0]
-            y = self.land_list[i][1]
-            cv2.circle(image, (x, y), 5, (0, 0, 255), thickness=2)
-        name = path.split(self.image_name)
-        name = path.join("output", name[1])
-        cv2.imwrite(name, image)
+            x = self.land_list[i][0] #x coordinate
+            y = self.land_list[i][1] #y coordinate
+            cv2.circle(image, (x, y), 5, (0, 0, 255), thickness=2) #create circle on landmark
+        name = path.split(self.image_name) #removing path from image
+        name = path.join("output", name[1]) #adding output path to image
+        cv2.imwrite(name, image) #write image
