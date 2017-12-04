@@ -16,20 +16,45 @@ from model import utils
 
 
 class AttributeFC(nn.Module):
-
+    """
+    Attributes model with fully connected output layers
+    """
     def __init__(self, pretrained_fc, fc_dim, output_shape):
+        """
+        Constructor for class
+
+        :param pretrained_fc: Pre-trained model's fully connected layers
+        :param fc_dim: Number of outputs of the pre-trained model's fully connected layers
+        :param output_shape: Number of desired outputs for the model
+        """
         super().__init__()
+
+        # remove the last linear layer, and a replace with a a trainable Linear layer
         layers = list(
             pretrained_fc.children())[:-1] + [nn.Linear(fc_dim, output_shape)]
+        # assign the model as an attribute to the class
         self.model = nn.Sequential(*layers)
 
     def forward(self, x):
+        """Defines the forward pass for the model
+
+        :param x: input to the network
+        """
+        # Set the input to the network
+        # Use softmax on the last linear layer to give results
         return F.softmax(self.model(x))
 
 
 class AttributeFCN(nn.Module):
-
+    """
+    Attributes model with fully convolutional output layers
+    """
     def __init__(self, input_shape, output_shape, return_conv_layer=False):
+        """
+        Constructor for class
+
+        :param 
+        """
         super().__init__()
         self.return_conv_layer = return_conv_layer
 
