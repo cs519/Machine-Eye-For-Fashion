@@ -61,7 +61,7 @@ def load_fcn_model(ModelClass,
     :param input_shape: Number of outputs of feature extractor; used as number of inputs for next layer
     :param output_shape: Number of desired outputs for the network
     :param weights_path: Path to weights file; default: None
-    :param return_conv_layer: Boolean on whether to return the state of the last convolutional layer
+    :param return_conv_layer: Boolean on whether to return the state of the last convolutional layer; default: False
     :param use_gpu: Boolean on whether to use GPU; default: False
     """
     # Contruct a new model based on the given inputs
