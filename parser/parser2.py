@@ -35,14 +35,8 @@ def separate(filename, clothesType, myList):
             tlist = myList.pop(0)
             #obtaining path and name of image so we can copy it later
             name = tlist.pop(0)
-<<<<<<< HEAD
-            #creating cvs line
-            nline = [counter, tlist.pop(0), tlist.pop(0)]
-            vVals = []
-=======
             nline = [tlist.pop(0), tlist.pop(0)] #saving clothes type and variation
             vVals = [] #new list to save visibility values
->>>>>>> 28f13681f8f814ed138fa304bdfffca70cefe815
             while(tlist):
                 visibility = tlist.pop(0) #getting visibility
                 nline.append(tlist.pop(0)) #saving landmark coordinates
