@@ -28,7 +28,7 @@ class FashionNet(nn.Module):
         self.pose_features = pose_features
         # Create layers for fully connected pose layers
         self.fc_pose = nn.Sequential(
-            # Linear layer. Inputs = 25,088, Outputs = 8
+            # Linear layer. Inputs = 25,088, Outputs = 1
             nn.Linear(512 * 7 * 7, 1),
             # ReLU activation layer
             nn.ReLU(inplace=True),
