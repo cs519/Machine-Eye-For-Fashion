@@ -21,10 +21,10 @@ class CustomLoss(nn.Module):
         # Initial the loss functions
         euclid_loss = self.euclid_crit(landmarks_pred, landmarks_target) / 2
 
-        # cel_loss = self.cel_crit(vis_pred, vis_target)
+        cel_loss = self.__CrossEntropyLoss__(vis_pred, vis_target)
 
         # euclid_loss = torch.sum((landmarks_target - landmarks_pred)**2, 2)
-        totloss = torch.sum(euclid_loss)# , cel_loss)
+        totloss = torch.sum(euclid_loss , cel_loss)
         return totloss
 
     def __CrossEntropyLoss__(self, pred, targets):
