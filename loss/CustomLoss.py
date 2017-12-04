@@ -1,4 +1,3 @@
-from torch.autograd import Variable
 import torch
 import torch.nn as nn
 
@@ -7,6 +6,8 @@ class CustomLoss(nn.Module):
 
     def __init__(self):
         super(CustomLoss, self).__init__()
+        self.euclid_crit = nn.MSELoss()
+        self.cel_crit = nn.CrossEntropyLoss()
 
     def forward(self, preds, targets):
         # Extract the prections and targets from the tuples
@@ -18,15 +19,24 @@ class CustomLoss(nn.Module):
         vis_target = vis_target.view(1, -1)
 
         # Initial the loss functions
-        euclid_crit = nn.MSELoss()
-        euclid_loss = euclid_crit(landmarks_pred, landmarks_target) / 2
+        euclid_loss = self.euclid_crit(landmarks_pred, landmarks_target) / 2
 
-        # cel_crit = nn.CrossEntropyLoss()
-        # cel_loss = cel_crit(vis_pred, vis_target)
+        cel_loss = self.__CrossEntropyLoss__(vis_pred, vis_target)
 
         # euclid_loss = torch.sum((landmarks_target - landmarks_pred)**2, 2)
-        totloss = torch.sum(euclid_loss)#, cel_loss)
+        totloss = torch.sum(euclid_loss , cel_loss)
         return totloss
 
-    # def __CrossEntropyLoss__(self, pred, targets):
-        
+    def __CrossEntropyLoss__(self, pred, targets):
+        r, c = targets.size()
+
+        total_loss = 0
+
+        for i in range(r):
+            for j in range(0, c, 3):
+                print(pred[i][j:j + 3].view(1,-1))
+                print(targets[i][j:j + 3].view(1,-1))
+                total_loss += self.cel_crit((pred[i][j:j + 3]).view(1,-1),
+                                            (targets[i][j:j + 3]).view(1,-1))
+
+        return total_loss
