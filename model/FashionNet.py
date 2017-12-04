@@ -6,52 +6,34 @@ import torchvision
 class FashionNet(nn.Module):
     """
     FashionNet model"""
+
     def __init__(self, vgg_features, pose_features, num_outputs):
         super().__init__()
         outputs = num_outputs * 2
+        classes = num_outputs * 3
         self.vgg_features = vgg_features
         self.pose_features = pose_features
         self.fc_pose = nn.Sequential(
-            nn.Linear(512 * 7 * 7, 1),
-            nn.ReLU(True),
-            nn.Linear(1, 1),
-            nn.ReLU(True)
-        )
+            nn.Linear(512 * 7 * 7, 1), nn.ReLU(True), nn.Linear(1, 1),
+            nn.ReLU(True))
 
-        self.location = nn.Sequential(
-            nn.Linear(1, outputs)
-        )
+        self.location = nn.Sequential(nn.Linear(1, outputs))
 
         self.visibility = nn.Sequential(
-            nn.Linear(outputs, outputs),
-            nn.Softmax(),
-            nn.Linear(outputs, outputs),
-            nn.Softmax(),
-            nn.Linear(outputs, outputs),
-            nn.Softmax(),
-            nn.Linear(outputs, outputs),
-            nn.Softmax()
-        )
-
+            nn.Linear(outputs, classes), nn.Softmax(),
+            nn.Linear(classes, classes), nn.Softmax(),
+            nn.Linear(classes, classes), nn.Softmax(),
+            nn.Linear(classes, classes), nn.Softmax())
 
     def forward(self, x):
         x = self.vgg_features(x)
         x = self.pose_features(x)
-        x = x.view(x.size(0), - 1)
+        x = x.view(x.size(0), -1)
         x = self.fc_pose(x)
         landmarks = self.location(x)
         vis = self.visibility(landmarks)
-        
-        # vis = []
-
-        # c, v = landmarks.size()
-
-        # for i in range(0, c):
-        #     for j in range(0, v, 2):
-        #         vis.append(self.visibility(landmarks[i][j:j+2]))
 
         return landmarks, vis
-
 
 
 def features(batch_norm=False):
@@ -71,7 +53,7 @@ def make_landmark_pose_layers(batch_norm=False):
 
     # Make final convolution layers.
     conv2d = nn.Conv2d(512, 512, kernel_size=3, padding=1)
-    for i in range(3):    
+    for i in range(3):
         if batch_norm:
             layers.append(conv2d)
             layers.append(nn.BatchNorm2d(512))
