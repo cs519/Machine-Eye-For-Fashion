@@ -11,24 +11,6 @@ import argparse
 
 from train import create_model
 
-def draw_landmarks(img, landmarks):
-    """
-    Draw landmarks on image
-    :param img: image to draw on
-    :param landmarks: array of landmarks
-    :rtype img: image with landmarks drawn
-    """
-
-    # iterate through landmarks
-    for i in range(0, landmarks.shape[1], 2):
-        # get the x and y values of each landmark
-        x = landmarks[0][i]
-        y = landmarks[0][i+1]
-        # draw a circle at the location of the landmark
-        cv2.circle(img, (x,y), 5, (0,0,255), thickness=2)
-
-    # return an image with landmarks drawn
-    return img
 
 def test():
     parser = argparse.ArgumentParser()
@@ -66,12 +48,6 @@ def test():
     # print prediction
     print(prediction)
 
-    # display the image with drawn landmarks
-    plt.imshow(draw_landmarks(image, prediction))
-    plt.show()
-
-    # save the image with drawn landmarks
-    imsave('test.jpg', cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
 if __name__ == '__main__':
     test()
